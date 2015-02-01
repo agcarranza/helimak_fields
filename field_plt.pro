@@ -1,0 +1,1 @@
+PRO FIELD_PLT,GEOMx = -1.0y = 0.0z = 0.0obs = {vector,x,y,z}result = B(OBS,GEOM)print,resultend

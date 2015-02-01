@@ -1,0 +1,57 @@
+PRO JUNK2
+
+
+current_vertical = ('\MACHINE::TOP.N6023F_01:INPUT_01')
+current_total = ('\MACHINE::TOP.N6023F_01:INPUT_00')
+time = 'dim_of('+current_total+')'
+
+openw,1,'junk2.in'
+
+for i=7, 9 do begin
+	case 1 of
+		(i lt 10): begin
+			s = string(13100300) + string(i)
+		end
+		(i ge 10): begin
+			s = string(1310030) + string(i)
+		end
+	endcase
+		shot = strcompress(s, /remove_all)
+		mdsopen, 'machine', shot , status=stat
+	
+		t = mdsvalue(time)
+		total = mdsvalue(current_total)*1000
+		vertical = mdsvalue(current_vertical)*10*12.1
+		toroidal = total - vertical
+	
+		time1 = 0
+		time2 = 5
+
+		start = time1*2500.0
+		finish = time2*2500.0
+		interval = finish - start
+
+		total_int = total[start:finish]
+		vertical_int = vertical[start:finish]
+		toroidal_int = toroidal[start:finish]
+		
+		printf,1, total_int
+endfor
+
+close,1
+	
+
+
+;cgdisplay, 1240, 960
+;!P.MULTI = [0,2,2]
+;plot, t, total
+;plot, t, vertical
+;plot, t, toroidal
+
+
+
+
+
+
+END
+

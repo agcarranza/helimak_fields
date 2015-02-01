@@ -1,0 +1,70 @@
+;+
+; NAME:
+;    WRITE_CSV
+;
+; PURPOSE:
+;    Writes a comma-separated-variables (CSV) file from a CSV-style
+;    structure as read in by READ_CSV.
+;
+; CATEGORY:
+;    I/O
+;
+; CALLING SEQUENCE:
+;    WRITE_CSV, Filename, Csvstruct
+;
+; INPUTS:
+;    Filename:  Name of CSV file to write to.
+;
+;    Csvstruct: Structure containing data. If there are N fields, then
+;               the first N tags in the structure must be the data fields
+;               followed by 2 longs containing NROWS and NCOLS.
+;
+; OUTPUTS:
+;    Writes out a comma-separated-variables (CSV) file with a one-line header
+;    of the form '# COL1,COL2,COL3....'.
+;
+; EXAMPLE:
+;    Write back a CSV structure:
+;
+;    IDL> HELP, /STRUCT, Galstruct
+;    ** Structure <8237564>, 6 tags, length=80, data length=80, refs=1:
+;        NAME            STRING    Array[2]
+;        OBJID           ULONG64   Array[2]
+;        RA              DOUBLE    Array[2]
+;        DEC             DOUBLE    Array[2]
+;        NROWS           LONG                 2
+;        NCOLS           LONG                 4
+;    IDL> WRITE_CSV, 'galaxies.csv', Galstruct
+;
+; MODIFICATION HISTORY:
+;    Written by:  Jeremy Bailin
+;    11 June 2008 Public release in JBIU
+;-
+pro write_csv, filename, csvstruct
+
+on_error, 0
+
+header_names = tag_names(csvstruct)
+
+openw, lun, filename, /get_lun
+printf, lun, '# ', FORMAT='(A,$)'
+for i=0L,csvstruct.ncols-2 do printf, lun, header_names[i], FORMAT='(A,",",$)'
+printf, lun, header_names[csvstruct.ncols-1]
+
+for i=0L,csvstruct.nrows-1 do begin
+  strline=''
+  for j=0L,csvstruct.ncols-1 do begin
+    case size(csvstruct.(j), /type) of
+      7 : strline += string(csvstruct.(j)[i], FORMAT='(%"%s",$)')
+      5 : strline += string(csvstruct.(j)[i], FORMAT='(G0.10,$)')
+      15: strline += string(csvstruct.(j)[i], FORMAT='(I0,$)')
+    endcase
+    if j ne csvstruct.ncols-1 then strline += string(',', FORMAT='(A1,$)')
+  endfor
+  printf, lun, strline
+endfor
+
+close, lun
+free_lun, lun
+
+end

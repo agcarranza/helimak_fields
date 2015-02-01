@@ -1,0 +1,1 @@
+pro test_bzcirc = {center:{x:0.0,y:0.0,z:0.0},radius:200.0,j:1.0,nhat:{x:0.0,y:0.0,z:1.0}}obs = {x:0.0,y:0.0,z:0.5}B = circB(obs,circ)print,Breturnend

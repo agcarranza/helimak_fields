@@ -1,0 +1,1 @@
+PRO TEST_EKfor i=0,10 do beginarg = i/10.0PRINT,'E and K',arg,K(sqrt(arg)),E(sqrt(arg))endforreturnend
